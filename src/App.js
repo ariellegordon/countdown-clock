@@ -8,11 +8,12 @@ class App extends Component {
       time: 0,
       rounds: 0,
       selectedValue: 0,
-      active: true
+      active: true,
+      buttonDisabled: false
     };
     this.timer = 0;
     this.handleChange = this.handleChange.bind(this);
-    // this.timeChange = this.timeChange.bind(this);
+
     this.startTimer = this.startTimer.bind(this);
     this.startBreak = this.startBreak.bind(this);
   }
@@ -43,15 +44,17 @@ class App extends Component {
       } else {
         this.setState({ time: this.state.time - 1 });
       }
-    }, 100000);
+    }, 1000);
   }
 
   startTimer() {
+    this.setState({ buttonDisabled: true });
+
     if (this.state.time === 0) {
-      this.setState({ time: 600, rounds: this.state.rounds - 1 });
+      this.setState({ time: 600 });
     }
     let myTimer = setInterval(() => {
-      if (this.state.time === 0) {
+      if (this.state.time <= 0) {
         clearInterval(myTimer);
         this.setState({ active: false });
         this.startBreak();
@@ -122,7 +125,9 @@ class App extends Component {
             </h1>
           )}
         </div>
-        <button onClick={this.startTimer}>Start</button>
+        <button onClick={this.startTimer} disabled={this.state.buttonDisabled}>
+          Start
+        </button>
       </div>
     );
   }
