@@ -9,7 +9,10 @@ class App extends Component {
       rounds: 0,
       selectedValue: 0,
       active: true,
-      buttonDisabled: false
+      buttonDisabled: false,
+      roundsOn: "",
+      fontColor: "black",
+      popUp: "false"
     };
     this.timer = 0;
     this.handleChange = this.handleChange.bind(this);
@@ -21,8 +24,8 @@ class App extends Component {
   handleChange(event) {
     this.setState({
       selectedValue: event.target.value,
-      time: 600,
-      rounds: event.target.value
+      time: 5,
+      rounds: 1
     });
   }
 
@@ -33,31 +36,52 @@ class App extends Component {
       clearInterval();
     }
   }
-
-  startBreak() {
-    this.setState({ rounds: this.state.rounds - 1, time: 60 });
-    let myTimer = setInterval(() => {
-      if (this.state.time === 0) {
-        clearInterval(myTimer);
-        this.setState({ active: true });
-        this.startTimer();
-      } else {
-        this.setState({ time: this.state.time - 1 });
-      }
-    }, 1000);
-  }
-
   startTimer() {
-    this.setState({ buttonDisabled: true });
-
+    this.setState({
+      buttonDisabled: true,
+      roundsOn: "none",
+      fontColor: "black"
+    });
     if (this.state.time === 0) {
-      this.setState({ time: 600 });
+      this.setState({ time: 5 });
     }
     let myTimer = setInterval(() => {
       if (this.state.time <= 0) {
         clearInterval(myTimer);
         this.setState({ active: false });
         this.startBreak();
+      } else if (this.state.rounds === this.state.selectedValue) {
+        clearInterval(myTimer);
+        this.setState({ popUp: "" });
+        alert("Timer has finished");
+      } else {
+        this.setState({ time: this.state.time - 1 });
+      }
+    }, 1000);
+  }
+
+  startBreak() {
+    if (this.state.rounds === Math.floor(+this.state.selectedValue / 2)) {
+      this.setState({
+        rounds: this.state.rounds + 1,
+        time: 600,
+        fontColor: "#AC1C1C"
+      });
+    } else {
+      this.setState({
+        rounds: this.state.rounds + 1,
+        time: 5,
+        fontColor: "#AC1C1C"
+      });
+    }
+    let myTimer = setInterval(() => {
+      if (this.state.rounds === +this.state.selectedValue + 1) {
+        clearInterval(myTimer);
+        alert("Timer is finished");
+      } else if (this.state.time === 0) {
+        clearInterval(myTimer);
+        this.setState({ active: true });
+        this.startTimer();
       } else {
         this.setState({ time: this.state.time - 1 });
       }
@@ -96,8 +120,18 @@ class App extends Component {
         ? "0" + (this.state.time % 60)
         : this.state.time % 60;
     return (
-      <div className="App">
+      <div
+        className="App"
+        style={{
+          backgroundColor: this.state.backgroundColor,
+          color: this.state.fontColor
+        }}
+      >
         <div>
+          <h1>Launch Day Clock</h1>
+        </div>
+
+        <div style={{ display: this.state.roundsOn }}>
           <h3>Number of Rounds</h3>
           <select
             id="rounds"
@@ -114,7 +148,12 @@ class App extends Component {
         <div>
           {this.state.active ? (
             <div>
-              <h1>Round {this.state.rounds}</h1>
+              <h1>
+                Round {this.state.rounds}{" "}
+                <span style={{ fontSize: 20 }}>
+                  / {this.state.selectedValue}
+                </span>
+              </h1>
               <h2>
                 {minutes}:{seconds}
               </h2>
@@ -125,7 +164,11 @@ class App extends Component {
             </h1>
           )}
         </div>
-        <button onClick={this.startTimer} disabled={this.state.buttonDisabled}>
+        <button
+          className="btn btn-primary btn-lg"
+          onClick={this.startTimer}
+          disabled={this.state.buttonDisabled}
+        >
           Start
         </button>
       </div>
