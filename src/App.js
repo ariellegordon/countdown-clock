@@ -24,7 +24,7 @@ class App extends Component {
   handleChange(event) {
     this.setState({
       selectedValue: event.target.value,
-      time: 5,
+      time: 600,
       rounds: 1
     });
   }
@@ -43,7 +43,7 @@ class App extends Component {
       fontColor: "black"
     });
     if (this.state.time === 0) {
-      this.setState({ time: 5 });
+      this.setState({ time: 600 });
     }
     let myTimer = setInterval(() => {
       if (this.state.time <= 0) {
@@ -70,7 +70,7 @@ class App extends Component {
     } else {
       this.setState({
         rounds: this.state.rounds + 1,
-        time: 5,
+        time: 60,
         fontColor: "#AC1C1C"
       });
     }
